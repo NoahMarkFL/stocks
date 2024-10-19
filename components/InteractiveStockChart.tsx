@@ -1,14 +1,5 @@
 "use client";
 
-import React, { FC, use, useMemo } from "react";
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  XAxis,
-  YAxis,
-  ResponsiveContainer,
-} from "recharts";
 import {
   Card,
   CardContent,
@@ -18,37 +9,47 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { StockData } from "@/lib/get-stock-data";
+import { companies } from "@/lib/stock-data";
+import { TrendingDown, TrendingUp } from "lucide-react";
+import { FC, use, useMemo } from "react";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from "recharts";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "./ui/chart";
-import { companies } from "@/lib/stock-data";
-import { TrendingDown, TrendingUp } from "lucide-react";
 
 interface InteractiveStockChartProps {
   chartData: Promise<StockData[]>;
   ticker: string;
 }
 
-const chartConfig = {
+const chartConfig: ChartConfig = {
   priceData: {
     label: "Price Data",
   },
   high: {
     label: "High",
-    color: "hsl(var(--chart-3))",
+    color: "hsl(120, 60%, 45%)", // A slightly muted green, indicating high points in stock
   },
   close: {
     label: "Close",
-    color: "hsl(var(--chart-2))",
+    color: "hsl(220, 15%, 55%)", // A neutral blue-gray to represent close values
   },
   low: {
     label: "Low",
-    color: "hsl(var(--chart-1))",
+    color: "hsl(0, 60%, 50%)", // Standard red for low points in stock
   },
-} satisfies ChartConfig;
+};
+
 
 export const InteractiveStockChart: FC<InteractiveStockChartProps> = ({
   chartData: stockData,
@@ -104,19 +105,20 @@ export const InteractiveStockChart: FC<InteractiveStockChartProps> = ({
   const isTrendingUp = percentageChange > 0;
 
   return (
-    <Card className='w-full'>
-      <CardHeader className='flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row'>
-        <div className='flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6'>
+    <Card className="w-full">
+      <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
+        <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
           <CardTitle>{ticker}</CardTitle>
           <CardDescription>{company?.name}</CardDescription>
         </div>
       </CardHeader>
-      <CardContent className='px-2 sm:p-6'>
-        <div className='aspect-auto h-[400px] w-full'>
+      <CardContent className="px-2 sm:p-6">
+        <div className="aspect-auto h-[400px] w-full">
           <ChartContainer
             config={chartConfig}
-            className='aspect-auto h-[400px] w-full'>
-            <ResponsiveContainer width='100%' height='100%'>
+            className="aspect-auto h-[400px] w-full"
+          >
+            <ResponsiveContainer width="100%" height="100%">
               <LineChart
                 data={formattedData}
                 margin={{
@@ -124,10 +126,11 @@ export const InteractiveStockChart: FC<InteractiveStockChartProps> = ({
                   right: 30,
                   left: 20,
                   bottom: 10,
-                }}>
-                <CartesianGrid strokeDasharray='3 3' />
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
-                  dataKey='date'
+                  dataKey="date"
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
@@ -147,7 +150,7 @@ export const InteractiveStockChart: FC<InteractiveStockChartProps> = ({
                 <ChartTooltip
                   content={
                     <ChartTooltipContent
-                      className='w-[150px]'
+                      className="w-[150px]"
                       labelFormatter={(value) => {
                         return new Date(value).toLocaleDateString("en-US", {
                           month: "short",
@@ -158,22 +161,22 @@ export const InteractiveStockChart: FC<InteractiveStockChartProps> = ({
                   }
                 />
                 <Line
-                  type='monotone'
-                  dataKey='high'
+                  type="monotone"
+                  dataKey="high"
                   stroke={chartConfig.high.color}
                   strokeWidth={2}
                   dot={false}
                 />
                 <Line
-                  type='monotone'
-                  dataKey='close'
+                  type="monotone"
+                  dataKey="close"
                   stroke={chartConfig.close.color}
                   strokeWidth={2}
                   dot={false}
                 />
                 <Line
-                  type='monotone'
-                  dataKey='low'
+                  type="monotone"
+                  dataKey="low"
                   stroke={chartConfig.low.color}
                   strokeWidth={2}
                   dot={false}
@@ -183,29 +186,29 @@ export const InteractiveStockChart: FC<InteractiveStockChartProps> = ({
           </ChartContainer>
         </div>
       </CardContent>
-      <CardFooter className='flex-col items-start gap-2 text-sm'>
-        <div className='font-medium leading-none'>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="font-medium leading-none">
           {isTrendingUp ? (
             <>
               Trending up by{" "}
-              <span className='text-[#2DB78A]'>
+              <span className="text-[#2DB78A]">
                 {percentageChange.toFixed(2)}%{" "}
               </span>{" "}
               this month{" "}
-              <TrendingUp className='inline text-[#2DB78A] h-4 w-4' />
+              <TrendingUp className="inline text-[#2DB78A] h-4 w-4" />
             </>
           ) : (
             <>
               Trending down by{" "}
-              <span className='text-[#E2366F]'>
+              <span className="text-[#E2366F]">
                 {percentageChange.toFixed(2)}%{" "}
               </span>{" "}
               this month{" "}
-              <TrendingDown className='inline text-[#E2366F] h-4 w-4' />
+              <TrendingDown className="inline text-[#E2366F] h-4 w-4" />
             </>
           )}
         </div>
-        <div className='leading-none text-muted-foreground'>
+        <div className="leading-none text-muted-foreground">
           Showing stock data for the last 3 months
         </div>
       </CardFooter>
